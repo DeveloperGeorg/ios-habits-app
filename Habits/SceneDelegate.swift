@@ -14,20 +14,51 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+        guard let scene = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: scene)
+        let tabBarController = UITabBarController()
+        
+        let habitsNavigationController = UINavigationController()
+        habitsNavigationController.navigationBar.prefersLargeTitles = true
+        habitsNavigationController.navigationBar.tintColor = ColorKit.systemPurple
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = .white
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
 
-        // Create the SwiftUI view that provides the window contents.
-        let contentView = ContentView()
-
-        // Use a UIHostingController as window root view controller.
-        if let windowScene = scene as? UIWindowScene {
-            let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: contentView)
-            self.window = window
-            window.makeKeyAndVisible()
-        }
+        habitsNavigationController.navigationBar.tintColor = ColorKit.systemPurple
+        habitsNavigationController.navigationBar.standardAppearance = appearance
+        habitsNavigationController.navigationBar.compactAppearance = appearance
+        habitsNavigationController.navigationBar.scrollEdgeAppearance = appearance
+        
+        
+        let habitsViewController = HabitsViewController()
+        habitsNavigationController.pushViewController(habitsViewController, animated: false)
+        habitsNavigationController.tabBarItem = UITabBarItem(
+            title: "Привычки",
+            image: UIImage(systemName: "rectangle.grid.1x2.fill")?.withTintColor(.gray, renderingMode: .alwaysOriginal),
+            selectedImage: UIImage(systemName: "rectangle.grid.1x2.fill")?.withTintColor(.purple, renderingMode: .alwaysOriginal)
+        )
+        
+        let infoNavigationController = UINavigationController()
+        let infoViewController = InfoViewController()
+        infoNavigationController.pushViewController(infoViewController, animated: false)
+        infoNavigationController.tabBarItem = UITabBarItem(
+            title: "Информация",
+            image: UIImage(systemName: "info.circle")?.withTintColor(.gray, renderingMode: .alwaysOriginal),
+            selectedImage: UIImage(systemName: "info.circle")?.withTintColor(.purple, renderingMode: .alwaysOriginal)
+        )
+        
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.gray], for: .normal)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.purple], for: .selected)
+        tabBarController.setViewControllers([
+            habitsNavigationController,
+            infoNavigationController
+        ], animated: false)
+        
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+        self.window = window
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -59,5 +90,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
 
+}
+
+extension UIView {
+    func addSubviews(_ views: [UIView]) {
+        views.forEach{ addSubview($0) }
+    }
+    func activateConstraints(_ constraints: [NSLayoutConstraint]) -> Void {
+        NSLayoutConstraint.activate(constraints)
+    }
+}
+
+extension UIViewController {
+    func addSubviews(_ views: [UIView]) {
+        views.forEach{ view.addSubview($0) }
+    }
+    func activateConstraints(_ constraints: [NSLayoutConstraint]) -> Void {
+        NSLayoutConstraint.activate(constraints)
+    }
 }
 
