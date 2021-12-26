@@ -16,7 +16,7 @@ class HabitCollectionViewCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
         label.numberOfLines = 2
         
-        label.text = "Прочитать 30 страниц «Автоматизации рутины. Главное о главном"
+        label.text = ""
         return label
     }()
     
@@ -31,7 +31,7 @@ class HabitCollectionViewCell: UICollectionViewCell {
         textView.textContainer.lineFragmentPadding = 0
         textView.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         
-        textView.text = "Каждый день в 7:30"
+        textView.text = ""
         return textView
     }()
     
@@ -41,7 +41,7 @@ class HabitCollectionViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 13, weight: .bold)
         
-        label.text = "Счётчик: 3"
+        label.text = "Счётчик: 0"
         return label
     }()
     
@@ -70,14 +70,6 @@ class HabitCollectionViewCell: UICollectionViewCell {
             checkMarkView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -25),
             checkMarkView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 0),
             checkMarkView.bottomAnchor.constraint(equalTo: mainView.bottomAnchor, constant: 0),
-//
-//            curcleCheckmarkView.widthAnchor.constraint(equalToConstant: CGFloat(logoImageSize)),
-//            curcleCheckmarkView.heightAnchor.constraint(equalToConstant: CGFloat(logoImageSize)),
-//            curcleCheckmarkView.leadingAnchor.constraint(equalTo: checkMarkView.leadingAnchor),
-//            curcleCheckmarkView.trailingAnchor.constraint(equalTo: checkMarkView.trailingAnchor),
-//            curcleCheckmarkView.centerYAnchor.constraint(equalTo: checkMarkView.centerYAnchor),
-//            temporaryCheckMark.centerYAnchor.constraint(equalTo: curcleCheckmarkView.centerYAnchor),
-//            temporaryCheckMark.centerXAnchor.constraint(equalTo: curcleCheckmarkView.centerXAnchor),
             
             titleLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: CGFloat(ViewConstants.largePadding)),
             titleLabel.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: CGFloat(ViewConstants.largePadding)),
@@ -90,11 +82,28 @@ class HabitCollectionViewCell: UICollectionViewCell {
             counterLabel.trailingAnchor.constraint(equalTo: checkMarkView.leadingAnchor, constant: -40),
         ])
     }
+
+    
+    public func setName(_ name: String) {
+        titleLabel.text = name
+    }
+    
+    public func setScheduleTime(_ time: Date) {
+        let timeFormatter = DateFormatter()
+        timeFormatter.timeStyle = DateFormatter.Style.short
+        let strDate = timeFormatter.string(from: time)
+        descriptionView.text = "Каждый день в \(strDate)"
+    }
     
     public func setBaseColor(_ baseColor: UIColor) {
         self.baseColor = baseColor
         titleLabel.textColor = self.baseColor
         checkMarkView.setBaseColor(self.baseColor)
+    }
+    
+    public func setViewsCounter(_ counter: Int) {
+        
+        counterLabel.text = "Счётчик: \(counter)"
     }
     
     public func toggleHabitDone(_ isDone: Bool) {

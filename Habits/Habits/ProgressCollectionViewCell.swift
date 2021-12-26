@@ -26,14 +26,14 @@ class ProgressCollectionViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 13, weight: .bold)
         
-        label.text = "50%"
+        label.text = "0%"
         return label
     }()
     
     private let progressView: UIProgressView = {
         let progressView = UIProgressView()
         progressView.translatesAutoresizingMaskIntoConstraints = false
-        progressView.progress = 50/100
+        progressView.progress = 0
         progressView.progressTintColor = .purple
         progressView.layer.cornerRadius = 3.5
         return progressView
@@ -67,5 +67,10 @@ class ProgressCollectionViewCell: UICollectionViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func setProgressValue(_ value: Float) {
+        progressView.progress = value
+        progressPercentLabel.text = "\(Int(value*100))%"
     }
 }

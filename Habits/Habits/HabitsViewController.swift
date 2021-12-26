@@ -1,6 +1,12 @@
 import UIKit
 
 class HabitsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    fileprivate var store: HabitsStore
+    
+    var progressCellId = "ProgressCell"
+    var habitCellId = "HabitCell"
+    
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -15,6 +21,7 @@ class HabitsViewController: UIViewController, UICollectionViewDataSource, UIColl
     }()
     
     public init() {
+        self.store = HabitsStore.shared
         super.init(nibName: nil, bundle: nil)
         
         let infoButtonItem = UIBarButtonItem(
@@ -45,50 +52,77 @@ class HabitsViewController: UIViewController, UICollectionViewDataSource, UIColl
         ])
 
         registerCells()
+        NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
     }
     
-    var progressCellId = "ProgressCell"
-    var habitCellId = "HabitCell"
-
+    @objc func loadList(notification: NSNotification) {
+      self.collectionView.reloadData()
+    }
+    
     fileprivate func registerCells() {
         collectionView.register(ProgressCollectionViewCell.self, forCellWithReuseIdentifier: progressCellId)
         collectionView.register(HabitCollectionViewCell.self, forCellWithReuseIdentifier: habitCellId)
     }
     
     @objc private func addHabit() {
-        let viewControllerNext = AddEditHabitViewController()
-        
-        navigationController?.pushViewController(viewControllerNext, animated: true)
+        let store = HabitsStore.shared
+        let newHabit = Habit(
+            name: "",
+            date: Date(),
+            color: HabitsColor.getNext(store.habits.last?.color ?? HabitsColor.blue)
+        )
+        let viewControllerNext = AddEditHabitViewController(newHabit, AddEditHabitViewMode.createMode)
+        let transition = CATransition()
+        transition.duration = 0.5
+        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        transition.type = CATransitionType.moveIn
+        transition.subtype = CATransitionSubtype.fromTop
+        navigationController?.view.layer.add(transition, forKey: nil)
+        navigationController?.pushViewController(viewControllerNext, animated: false)
     }
+    
+    @objc private func trackHabit(sender: Any) {
+        let checkMarkViewTap = sender as! CheckMarkViewTap
+        let habit = checkMarkViewTap.habit!
+        
+        let store = HabitsStore.shared
+        store.track(habit)
+        NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
+    }
+    
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return self.store.habits.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == 0 {
             let progressCell = collectionView.dequeueReusableCell(withReuseIdentifier: progressCellId, for: indexPath) as! ProgressCollectionViewCell
+            progressCell.setProgressValue(store.todayProgress)
             return progressCell
         }
         else
         {
             let habitCell = collectionView.dequeueReusableCell(withReuseIdentifier: habitCellId, for: indexPath) as! HabitCollectionViewCell
+            let habit = self.store.habits[indexPath.item-1]
             
-            var color: UIColor = UIColor.black
-            switch (indexPath.item+1) % 4 {
-                case 0:
-                    color = HabitsColor.blue
-                case 1:
-                    color = HabitsColor.green
-                case 2:
-                    color = HabitsColor.purple
-                case 3:
-                    color = HabitsColor.orange
-                default:
-                    color = UIColor.black
+            habitCell.setName(habit.name)
+            habitCell.setBaseColor(habit.color)
+            habitCell.setScheduleTime(habit.date)
+            habitCell.setViewsCounter(habit.trackDates.count)
+            
+            //checkMarkView
+            let date = habit.trackDates.last
+            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!)!
+            let isHabitDoneToday = Calendar.current.isDateInToday(date ?? yesterday)
+            habitCell.toggleHabitDone(isHabitDoneToday)
+            if isHabitDoneToday == false {
+                let tapGesture = CheckMarkViewTap(target: self, action: #selector(trackHabit(sender:)))
+                tapGesture.habit = habit
+                habitCell.checkMarkView.isUserInteractionEnabled = true
+                habitCell.checkMarkView.addGestureRecognizer(tapGesture)
             }
-            habitCell.setBaseColor(color)
-            habitCell.toggleHabitDone(Bool.random())
+            
             return habitCell
         }
     }
@@ -112,10 +146,14 @@ class HabitsViewController: UIViewController, UICollectionViewDataSource, UIColl
 
 extension HabitsViewController: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    let viewControllerNext = HabitDetailsViewController()
+    let habit = self.store.habits[indexPath.item-1]
+    let viewControllerNext = HabitDetailsViewController(habit)
     viewControllerNext.view.backgroundColor = ColorKit.commonBackgroundColor
-    viewControllerNext.title = "Сделать зарядку"
     
     navigationController?.pushViewController(viewControllerNext, animated: true)
   }
+}
+
+class CheckMarkViewTap: UITapGestureRecognizer {
+  var habit: Habit?
 }

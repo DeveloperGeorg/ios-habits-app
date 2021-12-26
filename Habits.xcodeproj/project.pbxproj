@@ -18,6 +18,7 @@
 		410B639F276E582E002CBA85 /* AddEditHabitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410B639E276E582E002CBA85 /* AddEditHabitView.swift */; };
 		410B63A72774E219002CBA85 /* FontKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410B63A62774E219002CBA85 /* FontKit.swift */; };
 		41B8F5332775989000B708E3 /* HabitsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B8F5322775989000B708E3 /* HabitsStore.swift */; };
+		41B8F53627759DEF00B708E3 /* AddEditHabitViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B8F53527759DEF00B708E3 /* AddEditHabitViewMode.swift */; };
 		41CBC5382764A5D60035393A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBC5372764A5D60035393A /* AppDelegate.swift */; };
 		41CBC53A2764A5D60035393A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBC5392764A5D60035393A /* SceneDelegate.swift */; };
 		41CBC53C2764A5D60035393A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBC53B2764A5D60035393A /* ContentView.swift */; };
@@ -42,6 +43,7 @@
 		410B639E276E582E002CBA85 /* AddEditHabitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditHabitView.swift; sourceTree = "<group>"; };
 		410B63A62774E219002CBA85 /* FontKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontKit.swift; sourceTree = "<group>"; };
 		41B8F5322775989000B708E3 /* HabitsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsStore.swift; sourceTree = "<group>"; };
+		41B8F53527759DEF00B708E3 /* AddEditHabitViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditHabitViewMode.swift; sourceTree = "<group>"; };
 		41CBC5342764A5D60035393A /* Habits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Habits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		41CBC5372764A5D60035393A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		41CBC5392764A5D60035393A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				410B6398276DE340002CBA85 /* HabitDetailsViewController.swift */,
 				410B639B276E57F9002CBA85 /* AddEditHabitViewController.swift */,
 				410B639E276E582E002CBA85 /* AddEditHabitView.swift */,
+				41B8F53527759DEF00B708E3 /* AddEditHabitViewMode.swift */,
 			);
 			path = Habits;
 			sourceTree = "<group>";
@@ -226,6 +229,7 @@
 				41CBC5382764A5D60035393A /* AppDelegate.swift in Sources */,
 				410B6389276A27FC002CBA85 /* HabitCollectionViewCell.swift in Sources */,
 				410B63A72774E219002CBA85 /* FontKit.swift in Sources */,
+				41B8F53627759DEF00B708E3 /* AddEditHabitViewMode.swift in Sources */,
 				41B8F5332775989000B708E3 /* HabitsStore.swift in Sources */,
 				410B639C276E57F9002CBA85 /* AddEditHabitViewController.swift in Sources */,
 				41CBC55D2767AB310035393A /* HabitsViewController.swift in Sources */,

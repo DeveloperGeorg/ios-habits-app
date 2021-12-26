@@ -110,3 +110,15 @@ extension UIViewController {
     }
 }
 
+extension UINavigationController {
+    func popBack(_ nb: Int) {
+        let viewControllers: [UIViewController] = self.viewControllers
+        guard viewControllers.count < nb else {
+            self.popToViewController(viewControllers[viewControllers.count - nb], animated: true)
+            return
+        }
+    }
+ }
+extension String: LocalizedError {
+    public var errorDescription: String? { return self }
+}

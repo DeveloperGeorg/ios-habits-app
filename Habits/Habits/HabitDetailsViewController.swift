@@ -9,9 +9,21 @@ class HabitDetailsViewController: UIViewController {
         return tableView
     }()
     
+    fileprivate var habit: Habit
+    
+    public init(_ habit: Habit) {
+        self.habit = habit
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Profile"
+        self.title = habit.name
+        self.view.backgroundColor = ColorKit.commonBackgroundColor
         navigationItem.largeTitleDisplayMode = .never
         
         let backButton = UIBarButtonItem()
@@ -46,22 +58,34 @@ class HabitDetailsViewController: UIViewController {
         }
     
     @objc private func editHabitAction() {
-        let viewControllerNext = AddEditHabitViewController()
-        viewControllerNext.view.backgroundColor = ColorKit.commonBackgroundColor
+        let viewControllerNext = AddEditHabitViewController(self.habit)
         
-        navigationController?.pushViewController(viewControllerNext, animated: true)
+        let transition = CATransition()
+        transition.duration = 0.5
+        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        transition.type = CATransitionType.moveIn
+        transition.subtype = CATransitionSubtype.fromTop
+        navigationController?.view.layer.add(transition, forKey: nil)
+        
+        navigationController?.pushViewController(viewControllerNext, animated: false)
     }
 }
 
 extension HabitDetailsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        3
+        habit.trackDates.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: forCellReuseIdentifier, for: indexPath)
-        cell.textLabel?.text = "Сегодня"
+        let date = habit.trackDates[indexPath.item]
+        let timeFormatter = DateFormatter()
+        timeFormatter.timeStyle = .none
+        timeFormatter.dateStyle = .medium
+        timeFormatter.locale = Locale.current
+        timeFormatter.doesRelativeDateFormatting = true
+        cell.textLabel?.text = timeFormatter.string(from: date)
         
         return cell
     }
