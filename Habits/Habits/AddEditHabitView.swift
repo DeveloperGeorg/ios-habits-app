@@ -104,7 +104,7 @@ class AddEditHabitView: UIView {
     }()
     
     var alert: UIAlertController = {
-        let alert = UIAlertController(title: "Удалить привычку", message: "Вы хотите удалить привычку \("название выбранной привычки")?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Удалить привычку", message: "Вы хотите удалить привычку \"\"?", preferredStyle: .alert)
         return alert
     }()
     
@@ -188,6 +188,7 @@ class AddEditHabitView: UIView {
     
     public func setNameValue(_ name: String) {
         nameTextField.text = name
+        alert.message = "Вы хотите удалить привычку \"\(name)\"?"
     }
     
     public func getNameValue() -> String {

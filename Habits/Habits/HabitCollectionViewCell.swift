@@ -13,7 +13,7 @@ class HabitCollectionViewCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+        label.font = FontKit.headline ?? UIFont.systemFont(ofSize: 17, weight: .semibold)
         label.numberOfLines = 2
         
         label.text = ""
@@ -29,7 +29,7 @@ class HabitCollectionViewCell: UICollectionViewCell {
         textView.isScrollEnabled = false
         textView.textContainerInset = UIEdgeInsets.zero
         textView.textContainer.lineFragmentPadding = 0
-        textView.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        textView.font = FontKit.caption ?? UIFont.systemFont(ofSize: 12, weight: .regular)
         
         textView.text = ""
         return textView
@@ -39,7 +39,7 @@ class HabitCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = ColorKit.systemGray2
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+        label.font = FontKit.footnoteCell ?? UIFont.systemFont(ofSize: 13, weight: .regular)
         
         label.text = "Счётчик: 0"
         return label

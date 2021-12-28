@@ -116,11 +116,16 @@ class HabitsViewController: UIViewController, UICollectionViewDataSource, UIColl
             let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!)!
             let isHabitDoneToday = Calendar.current.isDateInToday(date ?? yesterday)
             habitCell.toggleHabitDone(isHabitDoneToday)
+            let tapGesture = CheckMarkViewTap(target: self, action: #selector(trackHabit(sender:)))
+            tapGesture.habit = habit
             if isHabitDoneToday == false {
-                let tapGesture = CheckMarkViewTap(target: self, action: #selector(trackHabit(sender:)))
-                tapGesture.habit = habit
+                print("isHabitDoneToday: false = \(isHabitDoneToday)")
                 habitCell.checkMarkView.isUserInteractionEnabled = true
                 habitCell.checkMarkView.addGestureRecognizer(tapGesture)
+            } else {
+                print("isHabitDoneToday: true = \(isHabitDoneToday)")
+                habitCell.checkMarkView.isUserInteractionEnabled = false
+                habitCell.checkMarkView.removeGestureRecognizer(tapGesture)
             }
             
             return habitCell

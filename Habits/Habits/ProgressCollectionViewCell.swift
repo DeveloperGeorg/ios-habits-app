@@ -12,9 +12,9 @@ class ProgressCollectionViewCell: UICollectionViewCell {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = ColorKit.systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+        label.font = FontKit.footnoteStatus ?? UIFont.systemFont(ofSize: 13, weight: .semibold)
         
         label.text = "Всё получится!"
         return label
@@ -22,9 +22,9 @@ class ProgressCollectionViewCell: UICollectionViewCell {
     
     private let progressPercentLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = ColorKit.systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+        label.font = FontKit.footnoteStatus ?? UIFont.systemFont(ofSize: 13, weight: .semibold)
         
         label.text = "0%"
         return label

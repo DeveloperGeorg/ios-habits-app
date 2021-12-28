@@ -79,7 +79,9 @@ extension HabitDetailsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: forCellReuseIdentifier, for: indexPath)
-        let date = habit.trackDates[indexPath.item]
+        var trackDates = habit.trackDates
+        trackDates.reverse()
+        let date = trackDates[indexPath.item]
         let timeFormatter = DateFormatter()
         timeFormatter.timeStyle = .none
         timeFormatter.dateStyle = .medium

@@ -43,21 +43,21 @@ class InfoView: UIView {
         let infoTitleLabel = UILabel()
         infoTitleLabel.text = infoTitle
         infoTitleLabel.textColor = .black
-        infoTitleLabel.font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: .bold)
+        infoTitleLabel.font = FontKit.title3 ?? UIFont.systemFont(ofSize: 20, weight: .bold)
         infoTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         
-        let introduceTextTextView = getSimpleTextView()
+        let introduceTextTextView = getSimpleTextView(FontKit.body ?? UIFont.systemFont(ofSize: CGFloat(fontSize), weight: .regular))
         introduceTextTextView.text = introduceText
         
         paragraphsStackView.addArrangedSubview(introduceTextTextView)
         stages.enumerated().forEach({
-            let textView = getSimpleTextView()
+            let textView = getSimpleTextView(FontKit.body ?? UIFont.systemFont(ofSize: CGFloat(fontSize), weight: .regular))
             textView.text = "\(Int($0)+1). \($1)"
             paragraphsStackView.addArrangedSubview(textView)
         })
         
-        let footnoteTextView = getSimpleTextView()
+        let footnoteTextView = getSimpleTextView(FontKit.body ?? UIFont.systemFont(ofSize: CGFloat(fontSize), weight: .regular))
         footnoteTextView.text = footnote
         
         paragraphsStackView.addArrangedSubview(footnoteTextView)
@@ -98,10 +98,10 @@ class InfoView: UIView {
         ])
     }
     
-    private func getSimpleTextView() -> UITextView {
+    private func getSimpleTextView(_ font: UIFont) -> UITextView {
         let textView = UITextView()
         textView.textColor = .black
-        textView.font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: .regular)
+        textView.font = font
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textAlignment = .left
         textView.isScrollEnabled = false
