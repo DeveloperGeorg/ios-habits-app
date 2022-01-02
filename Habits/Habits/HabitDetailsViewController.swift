@@ -74,12 +74,12 @@ class HabitDetailsViewController: UIViewController {
 extension HabitDetailsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        habit.trackDates.count
+        HabitsStore.shared.dates.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: forCellReuseIdentifier, for: indexPath)
-        var trackDates = habit.trackDates
+        var trackDates = HabitsStore.shared.dates
         trackDates.reverse()
         let date = trackDates[indexPath.item]
         let timeFormatter = DateFormatter()
@@ -88,6 +88,13 @@ extension HabitDetailsViewController: UITableViewDataSource {
         timeFormatter.locale = Locale.current
         timeFormatter.doesRelativeDateFormatting = true
         cell.textLabel?.text = timeFormatter.string(from: date)
+        
+        if(HabitsStore.shared.habit(habit, isTrackedIn: date)) {
+            cell.accessoryType = .checkmark
+            cell.tintColor = ColorKit.systemPurple
+        } else {
+            cell.accessoryType = .none
+        }
         
         return cell
     }

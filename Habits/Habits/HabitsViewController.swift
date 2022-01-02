@@ -65,11 +65,10 @@ class HabitsViewController: UIViewController, UICollectionViewDataSource, UIColl
     }
     
     @objc private func addHabit() {
-        let store = HabitsStore.shared
         let newHabit = Habit(
             name: "",
             date: Date(),
-            color: HabitsColor.getNext(store.habits.last?.color ?? HabitsColor.blue)
+            color: ColorKit.systemPurple
         )
         let viewControllerNext = AddEditHabitViewController(newHabit, AddEditHabitViewMode.createMode)
         let transition = CATransition()
@@ -112,18 +111,13 @@ class HabitsViewController: UIViewController, UICollectionViewDataSource, UIColl
             habitCell.setViewsCounter(habit.trackDates.count)
             
             //checkMarkView
-            let date = habit.trackDates.last
-            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!)!
-            let isHabitDoneToday = Calendar.current.isDateInToday(date ?? yesterday)
-            habitCell.toggleHabitDone(isHabitDoneToday)
+            habitCell.toggleHabitDone(habit.isAlreadyTakenToday)
             let tapGesture = CheckMarkViewTap(target: self, action: #selector(trackHabit(sender:)))
             tapGesture.habit = habit
-            if isHabitDoneToday == false {
-                print("isHabitDoneToday: false = \(isHabitDoneToday)")
+            if habit.isAlreadyTakenToday == false {
                 habitCell.checkMarkView.isUserInteractionEnabled = true
                 habitCell.checkMarkView.addGestureRecognizer(tapGesture)
             } else {
-                print("isHabitDoneToday: true = \(isHabitDoneToday)")
                 habitCell.checkMarkView.isUserInteractionEnabled = false
                 habitCell.checkMarkView.removeGestureRecognizer(tapGesture)
             }

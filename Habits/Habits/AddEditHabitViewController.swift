@@ -38,7 +38,6 @@ class AddEditHabitViewController: UIViewController {
         
         let cancelAction = UIAlertAction(title: "Отмена", style: .default) {
             UIAlertAction in
-            print("Pressed Cancel action")
         }
         cancelAction.setValue(ColorKit.systemBlue, forKey: "titleTextColor")
         view.alert.addAction(cancelAction)
@@ -82,26 +81,38 @@ class AddEditHabitViewController: UIViewController {
         view.removeButton.addTarget(self, action: #selector(removeButtonHandler), for: .touchDown)
         
         view.datePicker.addTarget(self, action: #selector(timeChanged(_:)), for: .valueChanged)
+        
+        // Setting Delegate
+        view.picker.delegate = self
+        view.colorPicked.isUserInteractionEnabled = true
+        let gesture:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openColorPicker))
+        gesture.numberOfTapsRequired = 1
+        view.colorPicked.addGestureRecognizer(gesture)
+    }
+    
+    @objc private func openColorPicker()
+    {
+        let view = self.view as! AddEditHabitView
+        self.present(view.picker, animated: true, completion: nil)
     }
     
     @objc private func removeButtonHandler()
     {
-        print("remove button was touched")
         let view = self.view as! AddEditHabitView
         present(view.alert, animated: true, completion: nil)
     }
     
     @objc func timeChanged(_ sender: UIDatePicker) {
-        self.habit.date = sender.date
         let view = self.view as! AddEditHabitView
-        view.setTimeValue(self.habit.date)
+        view.setTimeValue(sender.date)
     }
     
     @objc private func saveButtonHandler()
     {
         let view = self.view as! AddEditHabitView
         self.habit.name = view.getNameValue()
-        print("\(self.habit.name)")
+        self.habit.color = view.colorPicked.backgroundColor ?? ColorKit.systemPurple
+        self.habit.date = view.datePicker.date
         if self.mode == AddEditHabitViewMode.createMode {
             self.store.habits.append(self.habit)
         }
@@ -122,4 +133,20 @@ class AddEditHabitViewController: UIViewController {
     }
     
     
+}
+
+extension AddEditHabitViewController: UIColorPickerViewControllerDelegate {
+    
+    //  Called once you have finished picking the color.
+    func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
+        let view = self.view as! AddEditHabitView
+        view.setColorValue(viewController.selectedColor)
+        
+    }
+    
+    //  Called on every color selection done in the picker.
+    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
+        let view = self.view as! AddEditHabitView
+        view.setColorValue(viewController.selectedColor)
+    }
 }

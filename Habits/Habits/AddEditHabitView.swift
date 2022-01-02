@@ -60,6 +60,12 @@ class AddEditHabitView: UIView {
         return view
     }()
     
+    let picker: UIColorPickerViewController = {
+        let picker = UIColorPickerViewController()
+        picker.selectedColor = ColorKit.systemPurple
+        return picker
+    }()
+    
     var timeFieldLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -198,6 +204,7 @@ class AddEditHabitView: UIView {
     public func setColorValue(_ color: UIColor) {
         colorPicked.backgroundColor = color
         colorPicked.layer.borderColor = color.cgColor
+        picker.selectedColor = color
     }
     
     public func setTimeValue(_ time: Date) {
