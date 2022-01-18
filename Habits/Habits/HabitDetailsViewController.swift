@@ -52,22 +52,21 @@ class HabitDetailsViewController: UIViewController {
             habitDatesTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             habitDatesTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadFields(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
     }
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-            return 250
-        }
+    
+    @objc func reloadFields(notification: NSNotification) {
+        self.title = habit.name
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection
+                                section: Int) -> String? {
+       return "Активность"
+    }
     
     @objc private func editHabitAction() {
         let viewControllerNext = AddEditHabitViewController(self.habit)
-        
-        let transition = CATransition()
-        transition.duration = 0.5
-        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        transition.type = CATransitionType.moveIn
-        transition.subtype = CATransitionSubtype.fromTop
-        navigationController?.view.layer.add(transition, forKey: nil)
-        
-        navigationController?.pushViewController(viewControllerNext, animated: false)
+        navigationController?.pushViewController(viewControllerNext, animated: true)
     }
 }
 

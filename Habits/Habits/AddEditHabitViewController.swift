@@ -7,6 +7,8 @@ class AddEditHabitViewController: UIViewController {
     
     fileprivate let store: HabitsStore
     
+    var addEditHabitView: AddEditHabitView
+    
     public init(_ habit: Habit? = nil, _ mode: AddEditHabitViewMode? = nil) {
         if (habit != nil) {
             self.habit = habit!
@@ -23,6 +25,13 @@ class AddEditHabitViewController: UIViewController {
             self.mode = mode!
         }
         self.store = HabitsStore.shared
+        
+        let view = AddEditHabitView(frame: .zero, mode: self.mode)
+        view.setNameValue(self.habit.name)
+        view.setColorValue(self.habit.color)
+        view.setTimeValue(self.habit.date)
+        self.addEditHabitView = view
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -31,29 +40,7 @@ class AddEditHabitViewController: UIViewController {
     }
     
     override func loadView() {
-        let view = AddEditHabitView(frame: .zero, mode: self.mode)
-        view.setNameValue(self.habit.name)
-        view.setColorValue(self.habit.color)
-        view.setTimeValue(self.habit.date)
-        
-        let cancelAction = UIAlertAction(title: "Отмена", style: .default) {
-            UIAlertAction in
-        }
-        cancelAction.setValue(ColorKit.systemBlue, forKey: "titleTextColor")
-        view.alert.addAction(cancelAction)
-        let okAction = UIAlertAction(title: "Удалить", style: .default) {
-            UIAlertAction in
-            let store = HabitsStore.shared
-            store.habits.removeAll{$0 == self.habit}
-            store.save()
-            NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
-            self.navigationController?.popBack(3)
-        }
-        okAction.setValue(UIColor.red, forKey: "titleTextColor")
-        view.alert.addAction(okAction)
-        
-        
-        self.view = view
+        self.view = self.addEditHabitView
     }
     
     override func viewDidLoad() {
@@ -77,42 +64,54 @@ class AddEditHabitViewController: UIViewController {
         editButtonItem.target = self
         editButtonItem.action = #selector(saveButtonHandler)
         
-        let view = self.view as! AddEditHabitView
-        view.removeButton.addTarget(self, action: #selector(removeButtonHandler), for: .touchDown)
+        self.addEditHabitView.removeButton.addTarget(self, action: #selector(removeButtonHandler), for: .touchDown)
         
-        view.datePicker.addTarget(self, action: #selector(timeChanged(_:)), for: .valueChanged)
+        self.addEditHabitView.datePicker.addTarget(self, action: #selector(timeChanged(_:)), for: .valueChanged)
         
         // Setting Delegate
-        view.picker.delegate = self
-        view.colorPicked.isUserInteractionEnabled = true
+        self.addEditHabitView.picker.delegate = self
+        self.addEditHabitView.colorPicked.isUserInteractionEnabled = true
         let gesture:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openColorPicker))
         gesture.numberOfTapsRequired = 1
-        view.colorPicked.addGestureRecognizer(gesture)
+        self.addEditHabitView.colorPicked.addGestureRecognizer(gesture)
     }
     
     @objc private func openColorPicker()
     {
-        let view = self.view as! AddEditHabitView
-        self.present(view.picker, animated: true, completion: nil)
+        self.present(self.addEditHabitView.picker, animated: true, completion: nil)
     }
     
     @objc private func removeButtonHandler()
     {
-        let view = self.view as! AddEditHabitView
-        present(view.alert, animated: true, completion: nil)
+        let alert = UIAlertController(title: "Удалить привычку", message: "Вы хотите удалить привычку \"\(self.habit.name)\"?", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .default) {
+            UIAlertAction in
+        }
+        cancelAction.setValue(ColorKit.systemBlue, forKey: "titleTextColor")
+        alert.addAction(cancelAction)
+        let okAction = UIAlertAction(title: "Удалить", style: .default) {
+            UIAlertAction in
+            let store = HabitsStore.shared
+            store.habits.removeAll{$0 == self.habit}
+            store.save()
+            NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
+            self.navigationController?.popBack(3)
+        }
+        okAction.setValue(UIColor.red, forKey: "titleTextColor")
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
     }
     
     @objc func timeChanged(_ sender: UIDatePicker) {
-        let view = self.view as! AddEditHabitView
-        view.setTimeValue(sender.date)
+        self.addEditHabitView.setTimeValue(sender.date)
     }
     
     @objc private func saveButtonHandler()
     {
-        let view = self.view as! AddEditHabitView
-        self.habit.name = view.getNameValue()
-        self.habit.color = view.colorPicked.backgroundColor ?? ColorKit.systemPurple
-        self.habit.date = view.datePicker.date
+        self.habit.name = self.addEditHabitView.getNameValue()
+        self.habit.color = self.addEditHabitView.colorPicked.backgroundColor ?? ColorKit.systemPurple
+        self.habit.date = self.addEditHabitView.datePicker.date
         if self.mode == AddEditHabitViewMode.createMode {
             self.store.habits.append(self.habit)
         }
@@ -123,30 +122,20 @@ class AddEditHabitViewController: UIViewController {
     
     @objc private func cancelButtonHandler()
     {
-        let transition = CATransition()
-        transition.duration = 0.5
-        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        transition.type = CATransitionType.moveIn
-        transition.subtype = CATransitionSubtype.fromBottom
-        navigationController?.view.layer.add(transition, forKey: nil)
-        navigationController?.popViewController(animated: false)
+        navigationController?.popViewController(animated: true)
     }
-    
-    
 }
 
 extension AddEditHabitViewController: UIColorPickerViewControllerDelegate {
     
     //  Called once you have finished picking the color.
     func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
-        let view = self.view as! AddEditHabitView
-        view.setColorValue(viewController.selectedColor)
+        self.addEditHabitView.setColorValue(viewController.selectedColor)
         
     }
     
     //  Called on every color selection done in the picker.
     func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
-        let view = self.view as! AddEditHabitView
-        view.setColorValue(viewController.selectedColor)
+        self.addEditHabitView.setColorValue(viewController.selectedColor)
     }
 }

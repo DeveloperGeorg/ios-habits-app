@@ -20,19 +20,16 @@ class HabitCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let descriptionView: UITextView = {
-        let textView = UITextView()
-        textView.isEditable = false
-        textView.textColor = ColorKit.systemGray
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.textAlignment = .left
-        textView.isScrollEnabled = false
-        textView.textContainerInset = UIEdgeInsets.zero
-        textView.textContainer.lineFragmentPadding = 0
-        textView.font = FontKit.caption ?? UIFont.systemFont(ofSize: 12, weight: .regular)
+    private let descriptionView: UILabel = {
+        let label = UILabel()
+        label.textColor = ColorKit.systemGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.font = FontKit.caption ?? UIFont.systemFont(ofSize: 12, weight: .regular)
         
-        textView.text = ""
-        return textView
+        label.text = ""
+        return label
     }()
     
     private let counterLabel: UILabel = {

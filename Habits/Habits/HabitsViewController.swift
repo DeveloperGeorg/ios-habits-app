@@ -71,13 +71,7 @@ class HabitsViewController: UIViewController, UICollectionViewDataSource, UIColl
             color: ColorKit.systemPurple
         )
         let viewControllerNext = AddEditHabitViewController(newHabit, AddEditHabitViewMode.createMode)
-        let transition = CATransition()
-        transition.duration = 0.5
-        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        transition.type = CATransitionType.moveIn
-        transition.subtype = CATransitionSubtype.fromTop
-        navigationController?.view.layer.add(transition, forKey: nil)
-        navigationController?.pushViewController(viewControllerNext, animated: false)
+        navigationController?.pushViewController(viewControllerNext, animated: true)
     }
     
     @objc private func trackHabit(sender: Any) {
@@ -145,11 +139,13 @@ class HabitsViewController: UIViewController, UICollectionViewDataSource, UIColl
 
 extension HabitsViewController: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    let habit = self.store.habits[indexPath.item-1]
-    let viewControllerNext = HabitDetailsViewController(habit)
-    viewControllerNext.view.backgroundColor = ColorKit.commonBackgroundColor
-    
-    navigationController?.pushViewController(viewControllerNext, animated: true)
+    let habitIndex = indexPath.item-1
+    if self.store.habits.indices.contains(habitIndex) {
+        let habit = self.store.habits[habitIndex]
+        let viewControllerNext = HabitDetailsViewController(habit)
+        viewControllerNext.view.backgroundColor = ColorKit.commonBackgroundColor
+        navigationController?.pushViewController(viewControllerNext, animated: true)
+    }
   }
 }
 

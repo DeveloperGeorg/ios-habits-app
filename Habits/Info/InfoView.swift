@@ -94,7 +94,7 @@ class InfoView: UIView {
             paragraphsStackView.topAnchor.constraint(equalTo: infoTitleLabel.bottomAnchor, constant: CGFloat(ViewConstants.padding)),
             paragraphsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(ViewConstants.padding)),
             paragraphsStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: CGFloat(-1*ViewConstants.padding*2)),
-            paragraphsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0)
+            paragraphsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: CGFloat(-1*ViewConstants.padding))
         ])
     }
     

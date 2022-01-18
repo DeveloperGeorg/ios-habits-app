@@ -34,6 +34,7 @@ class AddEditHabitView: UIView {
         textField.font = FontKit.body
         textField.textColor = .black
         textField.placeholder = "Бегать по утрам, спать 8 часов и т.п."
+        textField.adjustsFontSizeToFitWidth = true
         
         return textField
     }()
@@ -109,11 +110,6 @@ class AddEditHabitView: UIView {
         return button
     }()
     
-    var alert: UIAlertController = {
-        let alert = UIAlertController(title: "Удалить привычку", message: "Вы хотите удалить привычку \"\"?", preferredStyle: .alert)
-        return alert
-    }()
-    
     init(frame: CGRect, mode: AddEditHabitViewMode) {
         self.mode = mode
         super.init(frame: frame)
@@ -156,6 +152,7 @@ class AddEditHabitView: UIView {
             
             nameTextField.topAnchor.constraint(equalTo: nameTextFieldLabel.bottomAnchor, constant: CGFloat(ViewConstants.extraSmallPadding)),
             nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(ViewConstants.padding)),
+            nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: CGFloat(-1*ViewConstants.padding)),
             
             colorFieldLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: CGFloat(ViewConstants.padding)),
             colorFieldLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(ViewConstants.padding)),
@@ -176,7 +173,6 @@ class AddEditHabitView: UIView {
             
         ])
         if (mode == AddEditHabitViewMode.editMode) {
-            nameTextField.isEnabled = false
             nameTextField.textColor = ColorKit.systemBlue
             contentView.addSubviews([
                 removeButton
@@ -194,7 +190,6 @@ class AddEditHabitView: UIView {
     
     public func setNameValue(_ name: String) {
         nameTextField.text = name
-        alert.message = "Вы хотите удалить привычку \"\(name)\"?"
     }
     
     public func getNameValue() -> String {
@@ -217,4 +212,5 @@ class AddEditHabitView: UIView {
         timeFieldValueLabel.attributedText = text
         datePicker.date = time
     }
+    
 }
