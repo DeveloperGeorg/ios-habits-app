@@ -1,6 +1,7 @@
 import UIKit
 
 class AddEditHabitView: UIView {
+    fileprivate var mode: AddEditHabitViewMode
 
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -33,6 +34,7 @@ class AddEditHabitView: UIView {
         textField.font = FontKit.body
         textField.textColor = .black
         textField.placeholder = "Бегать по утрам, спать 8 часов и т.п."
+        textField.adjustsFontSizeToFitWidth = true
         
         return textField
     }()
@@ -57,6 +59,12 @@ class AddEditHabitView: UIView {
         view.backgroundColor = ColorKit.systemPurple
         
         return view
+    }()
+    
+    let picker: UIColorPickerViewController = {
+        let picker = UIColorPickerViewController()
+        picker.selectedColor = ColorKit.systemPurple
+        return picker
     }()
     
     var timeFieldLabel: UILabel = {
@@ -102,24 +110,8 @@ class AddEditHabitView: UIView {
         return button
     }()
     
-    var alert: UIAlertController = {
-        let alert = UIAlertController(title: "Удалить привычку", message: "Вы хотите удалить привычку \("название выбранной привычки")?", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Отмена", style: .default) {
-            UIAlertAction in
-            print("Pressed Cancel action")
-        }
-        cancelAction.setValue(ColorKit.systemBlue, forKey: "titleTextColor")
-        alert.addAction(cancelAction)
-        let okAction = UIAlertAction(title: "Удалить", style: .default) {
-            UIAlertAction in
-            print("Pressed OK action")
-        }
-        okAction.setValue(UIColor.red, forKey: "titleTextColor")
-        alert.addAction(okAction)
-        return alert
-    }()
-    
-    override init(frame: CGRect) {
+    init(frame: CGRect, mode: AddEditHabitViewMode) {
+        self.mode = mode
         super.init(frame: frame)
         self.backgroundColor = .white
         
@@ -132,8 +124,7 @@ class AddEditHabitView: UIView {
             colorPicked,
             timeFieldLabel,
             timeFieldValueLabel,
-            datePicker,
-            removeButton
+            datePicker
         ])
         scrollView.addSubviews([
             contentView
@@ -161,6 +152,7 @@ class AddEditHabitView: UIView {
             
             nameTextField.topAnchor.constraint(equalTo: nameTextFieldLabel.bottomAnchor, constant: CGFloat(ViewConstants.extraSmallPadding)),
             nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(ViewConstants.padding)),
+            nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: CGFloat(-1*ViewConstants.padding)),
             
             colorFieldLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: CGFloat(ViewConstants.padding)),
             colorFieldLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(ViewConstants.padding)),
@@ -179,13 +171,46 @@ class AddEditHabitView: UIView {
             datePicker.topAnchor.constraint(equalTo: timeFieldValueLabel.bottomAnchor, constant: CGFloat(ViewConstants.padding)),
             datePicker.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(ViewConstants.padding)),
             
-            removeButton.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: CGFloat(-1*ViewConstants.padding)),
-            removeButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
         ])
+        if (mode == AddEditHabitViewMode.editMode) {
+            nameTextField.textColor = ColorKit.systemBlue
+            contentView.addSubviews([
+                removeButton
+            ])
+            activateConstraints([
+                removeButton.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: CGFloat(-1*ViewConstants.padding)),
+                removeButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            ])
+        }
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func setNameValue(_ name: String) {
+        nameTextField.text = name
+    }
+    
+    public func getNameValue() -> String {
+        return nameTextField.text ?? ""
+    }
+    
+    public func setColorValue(_ color: UIColor) {
+        colorPicked.backgroundColor = color
+        colorPicked.layer.borderColor = color.cgColor
+        picker.selectedColor = color
+    }
+    
+    public func setTimeValue(_ time: Date) {
+        let timeFormatter = DateFormatter()
+        timeFormatter.timeStyle = DateFormatter.Style.short
+        let strDate = timeFormatter.string(from: time)
+        let text = NSMutableAttributedString()
+        text.append(NSAttributedString(string: "Каждый день в ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.black]));
+        text.append(NSAttributedString(string: strDate, attributes: [NSAttributedString.Key.foregroundColor: ColorKit.systemPurple]))
+        timeFieldValueLabel.attributedText = text
+        datePicker.date = time
     }
     
 }

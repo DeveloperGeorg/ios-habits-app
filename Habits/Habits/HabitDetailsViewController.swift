@@ -9,9 +9,21 @@ class HabitDetailsViewController: UIViewController {
         return tableView
     }()
     
+    fileprivate var habit: Habit
+    
+    public init(_ habit: Habit) {
+        self.habit = habit
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Profile"
+        self.title = habit.name
+        self.view.backgroundColor = ColorKit.commonBackgroundColor
         navigationItem.largeTitleDisplayMode = .never
         
         let backButton = UIBarButtonItem()
@@ -40,15 +52,20 @@ class HabitDetailsViewController: UIViewController {
             habitDatesTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             habitDatesTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadFields(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
     }
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-            return 250
-        }
+    
+    @objc func reloadFields(notification: NSNotification) {
+        self.title = habit.name
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection
+                                section: Int) -> String? {
+       return "Активность"
+    }
     
     @objc private func editHabitAction() {
-        let viewControllerNext = AddEditHabitViewController()
-        viewControllerNext.view.backgroundColor = ColorKit.commonBackgroundColor
-        
+        let viewControllerNext = AddEditHabitViewController(self.habit)
         navigationController?.pushViewController(viewControllerNext, animated: true)
     }
 }
@@ -56,12 +73,27 @@ class HabitDetailsViewController: UIViewController {
 extension HabitDetailsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        3
+        HabitsStore.shared.dates.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: forCellReuseIdentifier, for: indexPath)
-        cell.textLabel?.text = "Сегодня"
+        var trackDates = HabitsStore.shared.dates
+        trackDates.reverse()
+        let date = trackDates[indexPath.item]
+        let timeFormatter = DateFormatter()
+        timeFormatter.timeStyle = .none
+        timeFormatter.dateStyle = .medium
+        timeFormatter.locale = Locale.current
+        timeFormatter.doesRelativeDateFormatting = true
+        cell.textLabel?.text = timeFormatter.string(from: date)
+        
+        if(HabitsStore.shared.habit(habit, isTrackedIn: date)) {
+            cell.accessoryType = .checkmark
+            cell.tintColor = ColorKit.systemPurple
+        } else {
+            cell.accessoryType = .none
+        }
         
         return cell
     }
